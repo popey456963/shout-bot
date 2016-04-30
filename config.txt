@@ -1,0 +1,4 @@
+forumUsername=xxx
+forumPassword=xxx
+mybbuser=xxx_xxx
+postKey=xxx
