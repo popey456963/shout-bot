@@ -3,11 +3,15 @@ import requests, json, time, random, os, re
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
 
+from rpg import *
+
 userData = {}
 
 with open("config.txt", "r") as f:
     for i in f.readlines():
         userData[i.split("=")[0]] = i.split("=")[1].strip()
+
+print(userData)
 
 """
 Desc:   The ordinal function exists to turn numbres from the form of "1", "2", "3" to "1st", "2nd", "3rd"
@@ -145,12 +149,13 @@ Input:  String for message text, Boolean for whether it is private or not, User 
 Output: None
 """
 @rateLimiter(0.5)
-def sendMessage(message, private=False, user="897"):
-    print("Message Sent:    " + message[:63])
-    if private:
-        message = "/pvt " + user + " (ShoutboxBot) " + message
-    else:
-        message = "(ShoutboxBot) " + message
+def sendMessage(message, private=False, user="897", again=False):
+    if not again:
+        print("Message Sent:    " + message[:63])
+        if private:
+            message = "/pvt " + user + " (ShoutboxBot) " + message
+        else:
+            message = "(ShoutboxBot) " + message
 
     data = {
         "action": "dvz_sb_shout",
@@ -162,7 +167,11 @@ def sendMessage(message, private=False, user="897"):
         "mybbuser": userData['mybbuser']
     }
 
-    s.post("https://clwo.eu/xmlhttp.php", data, cookies=cookie)
+    reply = s.post("https://clwo.eu/xmlhttp.php", data, cookies=cookie)
+    if reply.text == "A":
+        sendMessage(message, private=private, user=user, again=True)
+
+global_send(sendMessage)
 
 """
 Desc:   List all currently possible commands and their syntax
@@ -369,7 +378,15 @@ registeredCommands = {
     "getSteam": sm_getSteam,
     "warnings": sm_warnings,
     "info": sm_info,
-    "players": sm_players
+    "players": sm_players,
+    "rpg": sm_rpg,
+    "rpg_help": sm_rpg_help,
+    "rpg_setup": sm_rpg_setup,
+    "rpg_listClasses": sm_rpg_listClasses,
+    "rpg_fight": sm_rpg_fight,
+    "rpg_attack": sm_rpg_attack,
+    "rpg_stats": sm_rpg_stats,
+    "rpg_estats": sm_rpg_estats
 }
 
 loginAPI()
