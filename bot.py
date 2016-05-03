@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import requests, json, time, random, os, re
-from bs4 import BeautifulSoup
-from urllib.parse import urlencode
 
-from rpg import *
+if __name__ == '__main__':
+    from bs4 import BeautifulSoup
+    from urllib.parse import urlencode
+    from rpg import *
 
 userData = {}
 
@@ -11,7 +12,8 @@ with open("config.txt", "r") as f:
     for i in f.readlines():
         userData[i.split("=")[0]] = i.split("=")[1].strip()
 
-print(userData)
+if __name__ == '__main__':
+    print(userData)
 
 """
 Desc:   The ordinal function exists to turn numbres from the form of "1", "2", "3" to "1st", "2nd", "3rd"
@@ -138,8 +140,8 @@ def handleMessages(messages):
                         registeredCommands[text.split(" ")[0][1:]](message)
                         print("Handled Command: " + text)
                     except KeyError as err:
-                        print("Unknown Command: {0}".format(err))
-                        sendMessage("Unknown Command...", private=True, user=message['data-username'])
+                        print("Unknown Command: " + str(err))
+                        sendMessage("Unknown Command...", private=True, user=message['user-id'])
             else:
                 pass
 
@@ -148,8 +150,27 @@ Desc:   Sends a message through the chatbox
 Input:  String for message text, Boolean for whether it is private or not, User to message if it is private
 Output: None
 """
+def splitPreserveWord(sentence):
+    partLength = 470
+    words = sentence.split(" ")
+    parts = [""]
+    partCounter = 0
+    for word in words:
+        if len(word) + len(parts[partCounter]) + 1 > partLength:
+            partCounter += 1
+        if parts[partCounter]:
+            parts[partCounter] += " " + word
+        else:
+            parts[partCounter] = word
+    return parts
+
 @rateLimiter(0.5)
-def sendMessage(message, private=False, user="897", again=False):
+def sendMessage(message, private=False, user="897"):
+    indMessages = [message[i:i+470] for i in range(0, len(message), 470)]
+    for toSend in indMessages:
+        rawSendMessage(toSend, private=private, user=user)
+
+def rawSendMessage(message, private=False, user="897", again=False):
     if not again:
         print("Message Sent:    " + message[:63])
         if private:
@@ -169,9 +190,9 @@ def sendMessage(message, private=False, user="897", again=False):
 
     reply = s.post("https://clwo.eu/xmlhttp.php", data, cookies=cookie)
     if reply.text == "A":
-        sendMessage(message, private=private, user=user, again=True)
-
-global_send(sendMessage)
+        rawSendMessage(message, private=private, user=user, again=True)
+    
+# global_send(sendMessage)
 
 """
 Desc:   List all currently possible commands and their syntax
@@ -353,52 +374,59 @@ print("Request Sesssion Successfully Instatiated")
 lastMessageID = 90000
 api = "https://clwo.eu/jailbreak/api/v1/"
 
-trivia = { "running": False, "runtime": 60 }
-ensureExists("data.json")
-ensureExists("steam.json")
+if __name__ == '__main__':
+    trivia = { "running": False, "runtime": 60 }
+    ensureExists("data.json")
+    ensureExists("steam.json")
 
-print("All Necessary Files Exist")
+    print("All Necessary Files Exist")
 
-steamIDs = []
-with open('steam.json') as f:
-    steamIDs = json.load(f)
+    steamIDs = []
+    with open('steam.json') as f:
+        steamIDs = json.load(f)
 
-leaderboard = []
-with open('data.json') as f:
-    leaderboard = json.load(f)
+    leaderboard = []
+    with open('data.json') as f:
+        leaderboard = json.load(f)
 
-print("We've Loaded Previous Configurations")
+    print("We've Loaded Previous Configurations")
 
-registeredCommands = {
-    "help": sm_help,
-    "trivia": sm_trivia,
-    "answer": sm_answer,
-    "leaderboard": sm_leaderboard,
-    "setSteam": sm_setSteam,
-    "getSteam": sm_getSteam,
-    "warnings": sm_warnings,
-    "info": sm_info,
-    "players": sm_players,
-    "rpg": sm_rpg,
-    "rpg_help": sm_rpg_help,
-    "rpg_setup": sm_rpg_setup,
-    "rpg_listClasses": sm_rpg_listClasses,
-    "rpg_fight": sm_rpg_fight,
-    "rpg_attack": sm_rpg_attack,
-    "rpg_stats": sm_rpg_stats,
-    "rpg_estats": sm_rpg_estats
-}
+    registeredCommands = {
+        "help": sm_help,
+        "trivia": sm_trivia,
+        "answer": sm_answer,
+        "leaderboard": sm_leaderboard,
+        "setSteam": sm_setSteam,
+        "getSteam": sm_getSteam,
+        "warnings": sm_warnings,
+        "info": sm_info,
+        "players": sm_players,
+        "rpg": sm_rpg,
+        "rpg_help": sm_rpg_help,
+        "rpg_setup": sm_rpg_setup,
+        "rpg_listClasses": sm_rpg_listClasses,
+        "rpg_fight": sm_rpg_fight,
+        "rpg_attack": sm_rpg_attack,
+        "rpg_stats": sm_rpg_stats,
+        "rpg_estats": sm_rpg_estats,
+        "rpg_shop": sm_rpg_shop,
+        "rpg_buy": sm_rpg_buy,
+        "rpg_rest": sm_rpg_rest
+    }
 
 loginAPI()
 cookies = s.cookies.get_dict()
-print("Our Cookie SID Is: " + cookies['sid'])
+
+if __name__ == '__main__':
+    print("Our Cookie SID Is: " + cookies['sid'])
 
 lastMessageID = lastMessage()
 
-print("The last message appears to be: " + str(lastMessageID))
+if __name__ == '__main__':
+    print("The last message appears to be: " + str(lastMessageID))
 
-sendMessage("The bot is now up and functional!", private=True)
-while 1:
-    testTrivia()
-    handleMessages(scrapeShoutbox())
-    
+    sendMessage("The bot is now up and functional!", private=True)
+    while 1:
+        testTrivia()
+        handleMessages(scrapeShoutbox())
+        # sendMessage("An unhandled error came about.  Check logs for more info", private=True)
