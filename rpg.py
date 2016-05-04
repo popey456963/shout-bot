@@ -15,8 +15,8 @@ baseEnemyStats = {
     "Goblin": [5, 3, 5, 5, ["Stick", 0, 0, 0, 5]],
     "Orc": [10, 6, 10, 5, ["Club", 0, 0, 0, 5]]
 }
-
-weaponShop = {
+w
+coeaponShop = {
     # Cost, HP, Accuracy, Agility, Strength
     "Warrior": {
         "Wooden Sword": [0, 0, 0, 0, 5],

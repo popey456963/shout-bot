@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, json, time, random, os, re
+import requests, json, time, random, os, re, sys
 
 if __name__ == '__main__':
     from bs4 import BeautifulSoup
@@ -427,6 +427,14 @@ if __name__ == '__main__':
 
     sendMessage("The bot is now up and functional!", private=True)
     while 1:
-        testTrivia()
-        handleMessages(scrapeShoutbox())
-        # sendMessage("An unhandled error came about.  Check logs for more info", private=True)
+        try:
+            testTrivia()
+            handleMessages(scrapeShoutbox())
+            # sendMessage("An unhandled error came about.  Check logs for more info", private=True)
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            print("Unexpected Error: " + str(sys.exc_info()[0]))
+            print("Unexpected Error: " + str(sys.exc_info()[1]))
+            print("Unexpected Error: " + str(sys.exc_info()[2]))
+            
