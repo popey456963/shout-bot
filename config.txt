@@ -1,4 +1,4 @@
-forumUsername=popey456963
-forumPassword=Plmnko456963
-mybbuser=897_NkdVrAbK2lktGu1m5ITa9mnzoGa4VseeumqwVGSD4gqEy8cC4C
-postKey=7d2290997dadadb6b1a02fe772c5bbc5
+forumUsername=xxx
+forumPassword=xxx
+mybbuser=xxx
+postKey=xxx

@@ -53,3 +53,5 @@ __pycache__
 newVersion\__pycache__
 newVersion\modules\__pycache__
 *.pyc
+__pycache__/bot.cpython-35.pyc
+*.pyc
