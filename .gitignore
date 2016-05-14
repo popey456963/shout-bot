@@ -46,4 +46,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Custom Things
 config.txt
+newVersion\data
+__pycache__
+newVersion\__pycache__
+newVersion\modules\__pycache__
+*.pyc

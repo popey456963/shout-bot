@@ -6,7 +6,7 @@ from bot import sendMessage
 
 # hp, accuracy, agility, strength, weapon (name, hp, accuracy, agility, strength)
 basePlayerStats = {
-    "Warrior": [20, 5, 2, 10, ["Cheap Sword", 0, 0, 0, 5]],
+    "Warfrior": [20, 5, 2, 10, ["Cheap Sword", 0, 0, 0, 5]],
     "Archer": [10, 5, 4, 6, ["Plastic Bow", 0, 0, 0, 5]],
     "Mage": [15, 5, 3, 8, ["Toy Wand", 0, 0, 0, 5]]
 }
@@ -16,7 +16,7 @@ baseEnemyStats = {
     "Orc": [10, 6, 10, 5, ["Club", 0, 0, 0, 5]]
 }
 
-weaponShop = {
+coeaponShop = {
     # Cost, HP, Accuracy, Agility, Strength
     "Warrior": {
         "Wooden Sword": [0, 0, 0, 0, 5],

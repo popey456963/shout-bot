@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, json, time, random, os, re
+import requests, json, time, random, os, re, sys
 
 if __name__ == '__main__':
     from bs4 import BeautifulSoup
@@ -110,13 +110,19 @@ def scrapeShoutbox():
             message['data-username'] = html['data-username']
             message['user-id'] = html.div.a['href'].split("&")[1]
             message['date'] = html.find("span", { "class" : "date" }).string
-            message['private'] = True if "Private shout" in str(html.find("span", { "class" : "private-message" })) else False
-            if message['private']:
-                text = html.find("div", { "class" : "text" })
-                span = html.find("span", { "class" : "private-message" })
-                message['message'] = (text.get_text()).replace(span.get_text(), "")
-            else:
-                message['message'] = html.find("div", { "class" : "text" }).string
+            try:
+                message['private'] = True if "Private shout" in str(html.find("span", { "class" : "private-message" })) else False
+            except:
+                message['private'] = False
+            try:
+                if message['private']:
+                    text = html.find("div", { "class" : "text" })
+                    span = html.find("span", { "class" : "private-message" })
+                    message['message'] = (text.get_text()).replace(span.get_text(), "")
+                else:
+                    message['message'] = html.find("div", { "class" : "text" }).string
+            except:
+                message['message'] = ""
             # print(message)
             messages.append(message)
             print("Received Message: " + message['message'])
@@ -269,6 +275,7 @@ def sm_setSteam(message):
     msg = message['data-username'] + ", I've successfully set your AccountID to be: " + data['data'][searchValue]
     sendMessage(msg, private=message['private'], user=str(message['user-id']))
 """
+"""
 def sm_setSteam(message):
     print(message['message'])
     print(message['message'].split(" "))
@@ -282,6 +289,26 @@ def sm_setSteam(message):
     steamIDs[message['data-username']] = value
     msg = message['data-username'] + ", I've set your AccountID to be: " + value
     sendMessage(msg, private=message['private'], user=str(message['user-id']))
+"""
+def sm_setSteam(message):
+    global steamIDs
+    searchValue = message['message'].lstrip(" ").split(" ")[1]
+    print("Checking for SteamID: " + searchValue)
+    data = json.loads(requests.get(api + "accounts.php?key=*&value=" + searchValue).text)
+    keys = []
+    for key in data['data'].keys():
+        keys.append(key)
+    print(keys)
+    if len(keys) == 1:
+        steamIDs[message['data-username']] = keys[0]
+        msg = message['data-username'] + ", I've set your AccountID to be: " + keys[0]
+        sendMessage(msg, private=message['private'], user=str(message['user-id']))
+    else:
+        msg = "That SteamID is either invalid, or there were multiple options that it could be"
+        sendMessage(msg, private=message['private'], user=str(message['user-id']))
+    print(data['data'])
+    
+    
 
 """
 Desc:   Get a steam id for a user
@@ -427,6 +454,14 @@ if __name__ == '__main__':
 
     sendMessage("The bot is now up and functional!", private=True)
     while 1:
-        testTrivia()
-        handleMessages(scrapeShoutbox())
-        # sendMessage("An unhandled error came about.  Check logs for more info", private=True)
+        try:
+            testTrivia()
+            handleMessages(scrapeShoutbox())
+            # sendMessage("An unhandled error came about.  Check logs for more info", private=True)
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            print("Unexpected Error: " + str(sys.exc_info()[0]))
+            print("Unexpected Error: " + str(sys.exc_info()[1]))
+            print("Unexpected Error: " + str(sys.exc_info()[2]))
+            
