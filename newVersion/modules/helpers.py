@@ -12,6 +12,7 @@ import json # Load Data
 import os # Ensure Exists
 import sys # Error Handling
 import traceback # Error Handling
+import threading # For async repeats
 
 """
 Desc:   The ordinal function exists to turn numbers from the form of 1,
@@ -130,3 +131,7 @@ def handleMessage(message, commands, lastMessageID):
         return int(message['data-id'])
     else:
         return lastMessageID
+
+def repeatAsync():
+    print("Running")
+    threading.Timer(5, f).start()

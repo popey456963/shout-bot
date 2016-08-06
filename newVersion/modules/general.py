@@ -11,7 +11,7 @@ def setMessage(sendMessageArg):
     sendMessage = sendMessageArg
 
 def g_help(message):
-    msg = "Currently Supported Commands: !help"
+    msg = "Currently Supported Commands: !help and !wiki (or !define)"
     sendMessage(msg, private=message['private'], user=message['user-id']) 
 
 commands = {
