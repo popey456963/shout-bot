@@ -51,7 +51,7 @@ Input:  None
 Output: Integer value of the last message ID
 """
 def lastMessage():
-    response = session.get(BASE_URL + "?action=dvz_sb_get_shouts&from=3500").text
+    response = session.get(BASE_URL + "?action=dvz_sb_get_updates&from=3700").text
     return int(json.loads(response)['last'])
 
 """
@@ -67,7 +67,7 @@ def scrapeShoutbox():
         "mybbuser": mybbuser
     }
 
-    response = session.get(BASE_URL + "?action=dvz_sb_get_shouts&from=" + str(lastMessageID), cookies=cookies).text
+    response = session.get(BASE_URL + "?action=dvz_sb_get_updates&from=" + str(lastMessageID), cookies=cookies).text
     
     if response:
         entries = json.loads(response)['html']
@@ -78,14 +78,10 @@ def scrapeShoutbox():
             message = {
                 'data-id': entry['data-id'],
                 'data-username': entry['data-username'],
-                'user-id': entry.div.a['href'].split("&")[1],
-                'date': entry.find("span", { "class" : "private_message" })
+                'user-id': entry.find("div", { "class" : "user" }).a['href'].split("/")[3].split(".")[0],
+                'date': entry.find("span", { "class" : "date" }).get_text()
             }
-            message['private'] = True if "Private shout" in str(entry.find("span", { "class" : "private-message" })) else False
             message['message'] = entry.find("div", { "class" : "text" }).get_text()
-            if message['private']:
-                pm = entry.find("span", { "class" : "private-message" }).get_text()
-                message['message'] = (message['message']).replace(pm, "")
             messages.append(message)
         return messages
     else:
@@ -100,13 +96,9 @@ def setKeys(postkey, bbuser):
 @wordLimit
 @rateLimiter(0.5)
 def sendMessage(message, private=False, user=897, again=False):
-    user = str(user)
     if not again:
         print("Message Sent: " + message[:63].lstrip())
-        if private:
-            message = "/pvt " + user + " (ShoutboxBot) " + message
-        else:
-            message = "(ShoutboxBot) " + message
+        message = "(ShoutboxBot) " + message
     data = {
         "action": "dvz_sb_shout",
         "key": postKey,
@@ -117,6 +109,7 @@ def sendMessage(message, private=False, user=897, again=False):
         "mybbuser": mybbuser
     }
     response = session.post(BASE_URL, data, cookies=cookies)
+    print(response.text)
     if response.text == "A":
         sendMessage(message, private=private, user=user, again=True)
 

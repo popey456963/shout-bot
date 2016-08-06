@@ -8,7 +8,7 @@ userData = loadData()
 
 clwo.login(userData['username'], userData['password'])
 clwo.setKeys(userData['postkey'], userData['mybbuser'])
-clwo.sendMessage("Test Bot Online!", private=True)
+clwo.sendMessage("Test Bot Online!")
 
 setMessage(clwo.sendMessage)
 general.setMessage(clwo.sendMessage)
