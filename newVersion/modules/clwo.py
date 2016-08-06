@@ -108,12 +108,10 @@ def sendMessage(message, private=False, user=897, again=False):
     cookies = {
         "mybbuser": mybbuser
     }
-    """
     response = session.post(BASE_URL, data, cookies=cookies)
     print(response.text)
     if response.text == "A":
         sendMessage(message, private=private, user=user, again=True)
-    """
 
 session = requests.session()
 lastMessageID = lastMessage()

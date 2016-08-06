@@ -7,6 +7,7 @@ lookups.  Sentence splitting is done via NLTK tokenizers.
 """
 
 import wikipedia
+import urllib.parse as urllib
 
 
 def setMessage(sendMessageArg):
@@ -14,7 +15,9 @@ def setMessage(sendMessageArg):
     sendMessage = sendMessageArg
 
 def w_define(message):
-    query = "Hi"
+    query = message['message'].split(" ")
+    query.pop(0)
+    query = " ".join(query)
     summary = ""
     try:
         summary = wikipedia.summary(query, sentences=3, auto_suggest=True, redirect=True)
@@ -28,8 +31,10 @@ def w_define(message):
         summary = "Disambiguation Error.  Query may refer to: " + ", ".join(e)
         if x:
             summary = summary + " plus " + str(len(x) - 6) + " other options."
+    except wikipedia.exceptions.PageError as e:
+        summary = "No article found."
     print(summary)
-    sendMessage(summary) 
+    sendMessage(summary)
 
 commands = {
     "define": w_define,
